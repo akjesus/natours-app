@@ -51,14 +51,14 @@ exports.getCheckout = catchAsync(async (req, res, next) => {
   });
 });
 const createCheckoutBooking = async (session) => {
-  console.log('We have started the 2nd function, session data is below');
-  console.log(session);
-  const tour = session.client_reference_id;
-  const user = await User.findOne({ email: session.customer_email });
-  const price = session.line_items[0].unit_amount / 100;
-  const booking = await Booking.create({ tour, user, price });
-  const url = '/my-tours';
-  await new Email(user, url).sendBooking();
+  console.log('We have started the 2nd function, session user is below');
+  console.log(session.client_reference_id);
+  // const tour = session.client_reference_id;
+  // const user = await User.findOne({ email: session.customer_email });
+  // const price = session.line_items[0].unit_amount / 100;
+  // const booking = await Booking.create({ tour, user, price });
+  // const url = '/my-tours';
+  // await new Email(user, url).sendBooking();
 };
 // exports.createCheckoutBooking = catchAsync(async (req, res, next) => {
 //   const { tour, user, price } = req.query;
