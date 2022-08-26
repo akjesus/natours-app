@@ -9,6 +9,7 @@ const sanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
 const hpp = require('hpp');
+const cors = require('cors');
 const userRouter = require('./routes/userRoutes');
 const employeeRouter = require('./routes/employeeRoutes');
 const tourRouter = require('./routes/tourRoutes');
@@ -25,6 +26,8 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 //GLOBAL MIDDLEWARE
 
+app.use(cors());
+app.options('*', cors());
 //reading static files
 app.use(express.static(path.join(__dirname, 'public')));
 //use helmet
