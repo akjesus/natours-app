@@ -51,7 +51,8 @@ exports.getCheckout = catchAsync(async (req, res, next) => {
   });
 });
 const createCheckoutBooking = async (session) => {
-  console.log('We have started the 2nd function');
+  console.log('We have started the 2nd function, session data is below');
+  console.log(session);
   const tour = session.client_reference_id;
   const user = await User.findOne({ email: session.customer_email });
   const price = session.line_items[0].unit_amount / 100;
@@ -81,8 +82,6 @@ exports.webhooksCheckout = (req, res, next) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
   if (event.type === 'checkout.session.completed') {
-    console.log('We have ended the 1st function');
-    console.log(event.data.object);
     createCheckoutBooking(event.data.object);
     res.status(200).json({ received: true });
   }
