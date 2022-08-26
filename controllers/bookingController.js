@@ -55,8 +55,8 @@ const createCheckoutBooking = async (session) => {
   const user = await User.findOne({ email: session.customer_email });
   const price = session.amount_total / 100;
   const booking = await Booking.create({ tour, user, price });
-  const url = '/my-tours';
-  await new Email(user, url).sendBooking();
+  const mailUrl = session.success_url;
+  await new Email(user, mailUrl).sendBooking();
 };
 // exports.createCheckoutBooking = catchAsync(async (req, res, next) => {
 //   const { tour, user, price } = req.query;
