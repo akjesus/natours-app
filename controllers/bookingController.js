@@ -35,9 +35,7 @@ exports.getCheckout = catchAsync(async (req, res, next) => {
     mode: 'payment',
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
-    success_url: `${req.protocol}://${req.get('host')}/?tour=${
-      req.params.tourId
-    }&user=${req.user.id}&price=${tour.price}`,
+    success_url: `${req.protocol}://${req.get('host')}/my-tours`,
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
   });
   // 3) Create session as response
@@ -46,16 +44,40 @@ exports.getCheckout = catchAsync(async (req, res, next) => {
     session,
   });
 });
-exports.createCheckoutBooking = catchAsync(async (req, res, next) => {
-  const { tour, user, price } = req.query;
-  if (!tour && !user && !price) return next();
+const createCheckoutBooking = async (session) => {
+  const tour = session.client_reference_id;
+  const user = await User.findOne({ email: session.customer_email });
+  const price = session.line_items[0].unit_amount / 100;
   const booking = await Booking.create({ tour, user, price });
-  const url = `${req.protocol}://${req.get('host')}/my-tours`;
-  const bookedUser = await User.findById(user);
-  await new Email(bookedUser, url).sendBooking();
-  res.redirect(req.originalUrl.split('?')[0]);
-});
-
+  const url = '/my-tours';
+  await new Email(user, url).sendBooking();
+};
+// exports.createCheckoutBooking = catchAsync(async (req, res, next) => {
+//   const { tour, user, price } = req.query;
+//   if (!tour && !user && !price) return next();
+//   const booking = await Booking.create({ tour, user, price });
+//   const url = `${req.protocol}://${req.get('host')}/my-tours`;
+//   const bookedUser = await User.findById(user);
+//   await new Email(bookedUser, url).sendBooking();
+//   res.redirect(req.originalUrl.split('?')[0]);
+// });
+exports.webhooksCheckout = (req, res, next) => {
+  const signature = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+  if (event.type === 'checkout.session.completed')
+    createCheckoutBooking(event.data.object);
+  res.status(200).json({ received: true });
+};
 exports.createBooking = factory.createOne(Booking);
 exports.getBooking = factory.findOne(Booking);
 exports.getAllBookings = factory.getAll(Booking);

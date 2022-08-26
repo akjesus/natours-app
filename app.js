@@ -18,6 +18,7 @@ const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const bookingController = require('./controllers/bookingController');
 
 //EXPRESS APP STARTS HERE
 const app = express();
@@ -43,6 +44,11 @@ const limiter = rateLimit({
 app.use(compression());
 // Apply the rate limiting middleware to all requests
 app.use('/api', limiter);
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhooksCheckout
+);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
