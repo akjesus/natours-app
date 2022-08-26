@@ -1,0 +1,13 @@
+extends base
+
+block content
+    main.main
+    .error
+        .error__title
+        h2.heading-secondary.heading-secondary--error Uh oh! Something went wrong!   
+        h2.error__emoji 😢 🤯
+        if msg
+            .error__msg=msg
+        else 
+            .error__msg Page not found!
+        
