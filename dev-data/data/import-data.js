@@ -45,7 +45,6 @@ const importData = async () => {
     await Reviews.create(review);
     console.log('Data written successfully');
   } catch (err) {
-    console.log(err);
   }
   process.exit();
 };

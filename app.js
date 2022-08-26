@@ -4,6 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const compression = require('compression');
 const sanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
@@ -35,6 +36,7 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
+app.use(compression());
 // Apply the rate limiting middleware to all requests
 app.use('/api', limiter);
 
@@ -66,7 +68,6 @@ app.use(
 // test MIDDLEWARE
 app.use((req, res, next) => {
   res.requestTime = new Date().toISOString();
-  // console.log(req.cookies);
   next();
 });
 
