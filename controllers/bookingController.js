@@ -56,17 +56,13 @@ const createCheckoutBooking = async (session) => {
   const price = session.amount_total / 100;
   const booking = await Booking.create({ tour, user, price });
   const mailUrl = session.success_url;
-  await new Email(user, mailUrl).sendBooking();
+  try {
+    const mailSent = await new Email(user, mailUrl).sendBooking();
+  } catch (err) {
+    console.log(err);
+  }
 };
-// exports.createCheckoutBooking = catchAsync(async (req, res, next) => {
-//   const { tour, user, price } = req.query;
-//   if (!tour && !user && !price) return next();
-//   const booking = await Booking.create({ tour, user, price });
-//   const url = `${req.protocol}://${req.get('host')}/my-tours`;
-//   const bookedUser = await User.findById(user);
-//   await new Email(bookedUser, url).sendBooking();
-//   res.redirect(req.originalUrl.split('?')[0]);
-// });
+
 exports.webhooksCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
   let event;
