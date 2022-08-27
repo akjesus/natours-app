@@ -54,10 +54,10 @@ const createCheckoutBooking = async (session) => {
   const tour = session.client_reference_id;
   const user = await User.findOne({ email: session.customer_email });
   const price = session.amount_total / 100;
-  const booking = await Booking.create({ tour, user, price });
+  await Booking.create({ tour, user, price });
   const mailUrl = session.success_url;
   try {
-    const mailSent = await new Email(user, mailUrl).sendBooking();
+    await new Email(user, mailUrl).sendBooking();
   } catch (err) {
     console.log(err);
   }
