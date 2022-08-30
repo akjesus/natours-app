@@ -4,6 +4,7 @@ const authController = require('../controllers/authController');
 const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
+router.use(viewsController.alerts);
 
 //ROUTES
 router.get('/me', authController.protect, viewsController.getAccount);
