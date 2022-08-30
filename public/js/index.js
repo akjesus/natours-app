@@ -14,7 +14,7 @@ const updateBtn = document.querySelector('.form-user-data');
 const updatePass = document.querySelector('.form-user-settings');
 const signupForm = document.querySelector('.form--signup');
 const bookBtn = document.getElementById('book-tour');
-const alertMessage = document.querySelector('.body').dataset.alert;
+
  
 //DELEGATION
 if(mapBox) {
@@ -90,7 +90,8 @@ if (bookBtn)
     const { tourId } = e.target.dataset;
     bookTour(tourId);
   });
-
+  
+const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) {
   showAlert('success', alertMessage, 15);
 }
